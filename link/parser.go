@@ -1,16 +1,12 @@
 package link
 
 import (
+	"fmt"
 	"io"
 	"strings"
 
 	"golang.org/x/net/html"
 )
-
-// Parser struct to handle parsing of links
-type Parser struct {
-	doc *html.Node
-}
 
 // Link struct containing information about a parsed link
 type Link struct {
@@ -18,21 +14,14 @@ type Link struct {
 	Text string `json:"text"`
 }
 
-// NewParser creates a parser instance for the passed HTML document
-func NewParser(reader io.Reader) (*Parser, error) {
+// Extract returns a list of parsed from a HTML document
+func Extract(reader io.Reader) ([]Link, error) {
 	doc, err := html.Parse(reader)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("parsing reader: %w", err)
 	}
 
-	return &Parser{
-		doc: doc,
-	}, nil
-}
-
-// ExtractLinks returns a list of parsed from a HTML document
-func (p *Parser) ExtractLinks() []Link {
-	anchorTags := searchAnchorTags(p.doc)
+	anchorTags := searchAnchorTags(doc)
 
 	links := make([]Link, 0, len(anchorTags))
 
@@ -42,7 +31,7 @@ func (p *Parser) ExtractLinks() []Link {
 		links = append(links, link)
 	}
 
-	return links
+	return links, nil
 }
 
 func searchAnchorTags(node *html.Node) []*html.Node {
