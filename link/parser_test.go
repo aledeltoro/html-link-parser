@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestNewParser(t *testing.T) {
+func TestExtractLinks(t *testing.T) {
 	c := require.New(t)
 
 	var parser *Parser
